@@ -5,7 +5,7 @@ use std::{env, fs};
 
 fn main() {
 	let localappdata = env::var("LOCALAPPDATA").expect("couldn't find LOCALAPPDATA env");
-	let versions = Path::new(&localappdata).join("Roblox\\Versions");
+	let versions = Path::new(&localappdata).join("Roblox").join("Versions");
 
 	// embed oof file
 	let oof: &'static [u8] = include_bytes!("ouch.ogg");
@@ -18,22 +18,19 @@ fn main() {
 
 	println!("patching...");
 
-	// the versions directory
 	let versions = fs::read_dir(versions).expect("no versions found");
 
-	// for every version found
 	for version in versions {
 		let version = version.unwrap();
 		let versionname = version.file_name().into_string().unwrap();
 
-		// if it is actually a version thing
 		if versionname.starts_with("version") {
-			let soundspath = Path::new(&version.path()).join("content//sounds");
+			let soundspath = Path::new(&version.path()).join("content").join("sounds");
 			
 			if soundspath.exists() {
 				let ouchpath = Path::new(&soundspath).join("ouch.ogg");
 				let mut file = File::create(&ouchpath).unwrap();
-				file.write_all(oof).expect("file fail idk");
+				file.write_all(oof).expect("couldn't write to file");
 			}
 		}
 	}
